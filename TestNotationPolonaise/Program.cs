@@ -1,7 +1,7 @@
 ﻿/**
  * Application de test de la fonction 'Polonaise'
- * author : Emds
- * date : 20/06/2020
+ * author : Ethan MENAGE
+ * date : 25/01/2024
  */
 using System;
 
@@ -26,6 +26,72 @@ namespace TestNotationPolonaise
                 reponse = Console.ReadKey().KeyChar;
             } while (reponse != carac1 && reponse != carac2);
             return reponse;
+        }
+
+        /// <summary>
+        /// calcul à partir d'une notation polonaise
+        /// </summary>
+        /// <param name="formule">la formule qu'on souhaite calculer</param>
+        /// <returns>le résultat du calcul</returns>
+        static Double Polonaise(string formule)
+        {
+            try
+            {
+                // Transformation de la formule en vecteur
+                string[] sep = formule.Split(' ');
+                int formuleLength = sep.Length;
+
+                // Boucle tant qu'il ne reste pas qu'une seule case
+                while (formuleLength > 1)
+                {
+                    // Rercherche d'un signe à partir de la fin
+                    int k = formuleLength - 1;
+                    while (k > 0 && sep[k] != "+" && sep[k] != "-" && sep[k] != "*" && sep[k] != "/")
+                    {
+                        k--;
+                    }
+
+                    // Récupération des deux valeurs concernées par le calcul
+                    float a = float.Parse(sep[k + 1]);
+                    float b = float.Parse(sep[k + 2]);
+
+                    // Calcul du résultat
+                    float result = 0;
+                    switch (sep[k])
+                    {
+                        case "+": result = a + b; break;
+                        case "-": result = a - b; break;
+                        case "*": result = a * b; break;
+                        case "/":
+                            if (b == 0)
+                            {
+                                return Double.NaN;
+                            }
+                            result = a / b; break;
+                    }
+
+                    // Stockage du résultat à la place du signe
+                    sep[k] = result.ToString();
+
+                    // Suppression des 2 cellules suivantes par décalage vers la gauche
+                    for (int j = k + 1; j < formuleLength - 2; j++)
+                    {
+                        sep[j] = sep[j + 2];
+                    }
+                    // Les cases suivantes sont mises à blanc
+                    for (int j = formuleLength - 2; j < formuleLength; j++)
+                    {
+                        sep[j] = " ";
+                    }
+                    formuleLength = formuleLength - 2;
+                }
+
+                return Double.Parse(sep[0]);
+            } 
+            catch
+            {
+                return Double.NaN;
+            }
         }
 
         /// <summary>
